@@ -2,9 +2,9 @@
   "name": "firebaseMovies",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "nodemon app/server.js"
   },
   "keywords": [],
   "author": "",
