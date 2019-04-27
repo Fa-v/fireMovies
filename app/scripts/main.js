@@ -1,44 +1,37 @@
 (function() {
   console.log('Hello Movies! 🎬');
-
+  const movies = {};
+  const movieInput = document.getElementById('movie');
+  const movieList = document.getElementById('movie-list');
   const moviesDb = firebase.database().ref('movies');
+  const detailsSect = document.createElement('div');
 
   /* Get Movies */
   function getMovies() {
-    moviesDb.once('value', snapshot => {
+    moviesDb.on('value', snapshot => {
       const allMovies = snapshot.val();
       renderMovieList(allMovies);
     });
-  }
-  function renderMovieList(allMovies) {
-    const list = document.getElementById('movie-list');
-    const template = Object.keys(allMovies)
-      .map(id => {
-        const movie = allMovies[id];
-        return getMovieItem(movie, id);
-      })
-      .join('');
-    list.innerHTML = template;
-  }
-
-  function getMovieItem(movie, id) {
-    return `<li data-id=${id}>${
-      movie.Title
-    } <button data-action="details">Details</button><button data-action="edit">Edit</button><button data-action="delete">Delete</button></li>`;
   }
 
   /* Add movie */
   function addMovie(data) {
     return moviesDb.push(data);
   }
+
   /* Update movie */
-  function updateMovie(id, data) {
-    return moviesDb.child(id).set(data);
+  function updateMovie(id, title) {
+    return moviesDb.child(id).update({ Title: title });
   }
 
   /* Delete movie */
   function deleteMovie(id) {
-    moviesDb.child(id).remove();
+    const confirmDelete = window.confirm(
+      'Estas segur@ que quieres borrar la peli?'
+    );
+    if (confirmDelete) {
+      return moviesDb.child(id).remove();
+    }
   }
 
   function getMovieDataByTitle(title) {
@@ -46,37 +39,108 @@
     const omDbUrl = `http://www.omdbapi.com/?t=${title}&apikey=${key}`;
     return fetch(omDbUrl).then(response => response.json());
   }
-  getMovies();
 
-  const searchBtn = document.getElementById('search-btn');
-  const movieInput = document.getElementById('movie');
-  const movieList = document.getElementById('movie-list');
+  /* Movie Details */
+  function getMovieDetails(id) {
+    moviesDb.child(id).once('value', snapshot => {
+      const details = snapshot.val();
+      renderDetails(details);
+    });
+  }
 
-  searchBtn.addEventListener('click', function(e) {
+  /* Edit title */
+  function editDetails(id) {
+    const newTitle = prompt('Escribe el nuevo título');
+    if (newTitle) {
+      updateMovie(id, newTitle);
+    }
+  }
+
+  /* Hide details section */
+  function closeDetails() {
+    detailsSect.innerHTML = '';
+  }
+
+  /* Render Movie list */
+  function renderMovieList(allMovies) {
+    const list = document.getElementById('movie-list');
+    const template = Object.keys(allMovies)
+      .map(id => {
+        const movie = allMovies[id];
+        return movieListTmpl(movie, id);
+      })
+      .join('');
+    list.innerHTML = template;
+  }
+
+  /* Movie list template */
+  function movieListTmpl(movie, id) {
+    return `<li data-id=${id}>${movie.Title}
+    <button data-action="details">Details</button>
+    <button data-action="edit">Edit</button>
+    <button data-action="delete">Delete</button>
+    </li>`;
+  }
+
+  /* Render Movie details */
+  function renderDetails(movieDetails) {
+    detailsSect.innerHTML = '';
+    const hideDetailsBtn = document.createElement('button');
+    hideDetailsBtn.innerText = 'Cerrar X';
+    hideDetailsBtn.setAttribute('data-action', 'close');
+
+    template = detailsTmpl(movieDetails);
+
+    detailsSect.insertAdjacentElement('afterbegin', hideDetailsBtn);
+    detailsSect.insertAdjacentHTML('beforeend', template);
+    movieList.append(detailsSect);
+  }
+
+  /* Movie details template */
+  function detailsTmpl(data) {
+    let template = Object.keys(data)
+      .map(key => {
+        return `
+          <p>${key}: ${data[key]}</p>
+        `;
+      })
+      .join('');
+    return template;
+  }
+
+  /* Events */
+  movieInput.addEventListener('keyup', function(e) {
     let title = movieInput.value.trim();
-    getMovieDataByTitle(title).then(addMovie);
+    if (e.keyCode === 13 && title) {
+      getMovieDataByTitle(title).then(addMovie);
+      movieInput.value = '';
+    }
   });
 
   movieList.addEventListener('click', function(e) {
     e.stopPropagation();
 
     const action = e.target.dataset.action;
-    const id = e.target.dataset.id;
-    const actions = {
-      edit: id => {
-        editDetails(id);
-      },
-      delete: action => {
-        console.log('delete called', action);
-      },
-      details: action => {
-        console.log('details called', action);
-      }
-    };
-    actions[action](action);
+    const id = e.target.parentElement.dataset.id;
+    if (event.target.nodeName === 'BUTTON') {
+      const actions = {
+        edit: action => {
+          editDetails(id);
+        },
+        delete: action => {
+          deleteMovie(id);
+        },
+        details: action => {
+          getMovieDetails(id);
+        },
+        close: action => {
+          closeDetails();
+        }
+      };
+      actions[action](action);
+    }
   });
 
-  function editDetails(id) {
-    console.log('edit', id);
-  }
+  getMovies();
+  return movies;
 })();
