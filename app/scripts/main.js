@@ -9,14 +9,16 @@
   /* Get Movies */
   function getMovies() {
     moviesDb.on('value', snapshot => {
-      const allMovies = snapshot.val();
+      const allMovies = snapshot.val() || {};
       renderMovieList(allMovies);
     });
   }
 
   /* Add movie */
   function addMovie(data) {
-    return moviesDb.push(data);
+    const normalizedData = normalizeData(data);
+
+    return moviesDb.push(normalizedData);
   }
 
   /* Update movie */
@@ -34,6 +36,19 @@
     }
   }
 
+  /* Normalize data */
+  function normalizeData(data) {
+    return Object.keys(data).reduce(function(newData, key) {
+      let newKey = key.toLowerCase();
+      newData = {
+        ...newData,
+        [newKey]: data[key]
+      };
+      return newData;
+    }, {});
+  }
+
+  /* Fetch data from OMBD API */
   function getMovieDataByTitle(title) {
     const key = '';
     const omDbUrl = `http://www.omdbapi.com/?t=${title}&apikey=${key}`;
@@ -75,7 +90,7 @@
 
   /* Movie list template */
   function movieListTmpl(movie, id) {
-    return `<li data-id=${id}>${movie.Title}
+    return `<li data-id=${id}>${movie.title}
     <button data-action="details">Details</button>
     <button data-action="edit">Edit</button>
     <button data-action="delete">Delete</button>
@@ -100,6 +115,10 @@
   function detailsTmpl(data) {
     let template = Object.keys(data)
       .map(key => {
+        let html = '';
+        if (key === 'poster') {
+          return `<img src=${data[key]}/>`;
+        }
         return `
           <p>${key}: ${data[key]}</p>
         `;
