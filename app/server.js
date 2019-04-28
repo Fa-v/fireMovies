@@ -1,8 +1,8 @@
 const express = require('express');
 const helmet = require('helmet');
+const config = require('./config');
 const app = express();
-const port = process.env.PORT || 3000;
-
+const port = config.port;
 const {
   getAllMovies,
   createMovie,
@@ -10,8 +10,12 @@ const {
   updateMovie,
   deleteMovie
 } = require('./lib/controller');
+const db = require('./lib/database');
+const bodyParser = require('body-parser');
 
+app.use(bodyParser.json());
 app.use(helmet());
+
 app.get('/', getAllMovies);
 app.get('/create/:name', createMovie);
 app.get('/movies/:id', getMovieDetail);
