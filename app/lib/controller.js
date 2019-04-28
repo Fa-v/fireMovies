@@ -4,6 +4,7 @@ const {
   updateFilm,
   deleteFilm
 } = require('./database');
+const { getMovieData } = require('./api');
 
 function getAllMovies(req, res, next) {
   getAllFilms()
@@ -13,7 +14,9 @@ function getAllMovies(req, res, next) {
 
 function createMovie(req, res, next) {
   const newTitle = { title: req.params.name };
-  createFilm(newTitle).then(res.send('Movie created'));
+  getMovieData(req.params.name)
+    .then(res => createFilm(res))
+    .then(res.send('Movie created'));
 }
 
 function getMovieDetail(req, res) {
