@@ -1,34 +1,39 @@
 const {
   getAllFilms,
   createFilm,
+  getFilmDetails,
   updateFilm,
   deleteFilm
 } = require('./database');
 const { getMovieData } = require('./api');
 
 function getAllMovies(req, res, next) {
-  getAllFilms()
-    .then(data => res.json(data))
-    .then(next);
+  getAllFilms().then(data => {
+    res.render('index', { data: data });
+  });
 }
 
 function createMovie(req, res, next) {
-  const newTitle = { title: req.params.name };
-  getMovieData(req.params.name)
+  getMovieData(req.body.title)
     .then(res => createFilm(res))
-    .then(res.send('Movie created'));
+    .then(data => res.redirect('/'));
 }
 
 function getMovieDetail(req, res) {
-  res.send('Movie detail');
+  getFilmDetails(req.params.id).then(data => {
+    res.render('details', { movie: data });
+  });
 }
 
 function updateMovie(req, res, next) {
-  updateFilm(req.params.id, 'bambi').then(res.send());
+  const newTitle = req.body.title.trim();
+  updateFilm(req.params.id, newTitle).then(_ => {
+    res.redirect('/');
+  });
 }
 
 function deleteMovie(req, res) {
-  deleteFilm(req.params.id).then(res.send('Movie deleted'));
+  deleteFilm(req.params.id).then(_ => res.redirect('/'));
 }
 
 module.exports = {
