@@ -1,0 +1,40 @@
+doctype html
+html(lang="en")
+  include includes/__head.pug
+  body
+    div.jumbotron.jumbotron-fluid.bg-light
+      div.container
+        h1 Fire Movies 🎬
+        form(action="/create" method="post")
+          div.form-group.row
+            h3.col-sm-2.lead Escribe un título
+            div.col-sm-10
+              input(type="text" name="title" placeholder="The matrix" style="min-width: 18rem; max-width: 25em;")
+    div.container
+      div.row
+        div.card-deck
+          each movie in data
+            div.col
+              div(data-id=`${movie.id}` style="max-width: 18rem;").card.border-info.mb-5
+                h3.card-header #{movie.title}
+                div.card-body
+                  p.card-text #{movie.plot}
+                div.card-footer
+                  div.btn-group.btn-group-sm
+                    a(type="button" id="details-btn" href=`/movies/${movie.id}`).btn.btn-outline-info Detalles
+                    a(type="button" href=`/movies/${movie.id}/update` id="modal" data-id=`${movie.id}` data-toggle="modal" data-target="#updateModal").btn.btn-outline-info Modificar
+                    a(type="button" href=`/movies/${movie.id}/delete`).btn.btn-outline-info Borrar
+
+div(id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true").modal.fade
+  div(role="document").modal-dialog
+    div.modal-content
+      div.modal-header
+        h5(id="exampleModalLabel").modal-title Modal title
+        button(type="button" data-dismiss="modal" aria-label="Close").close
+          span(aria-hidden="true") &times;
+      div.modal-body
+        form(id="form" action="" method="post")
+          div.form-group
+            input(type="text" name="title" placeholder="Título nuevo" style="min-width: 18rem; max-width: 25em;")
+          button(type="submit").btn.btn-primary.mr-2 Save
+          button(type="button" data-dismiss="modal").btn.btn-secondary Cancel
