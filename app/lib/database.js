@@ -8,7 +8,7 @@ function getAllFilms() {
     moviesDb.once(
       'value',
       snapshot => {
-        const data = snapshot.val();
+        const data = snapshot.val() || {};
         let newData = Object.keys(data).map(id => {
           data[id].id = id;
           return data[id];

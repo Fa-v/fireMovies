@@ -28,6 +28,29 @@ app.get('/movies/:id/delete', deleteMovie);
 app.post('/create', createMovie);
 app.post('/movies/:id/update', updateMovie);
 
+/**
+ * Error handler
+ * @see https://gist.github.com/zcaceres/2854ef613751563a3b506fabce4501fd
+ * @see https://thecodebarbarian.com/80-20-guide-to-express-error-handling
+ */
+app.get('*', function(req, res, next) {
+  let err = new Error('Page Not Found');
+  err.statusCode = 404;
+  err.shouldRedirect = true;
+  next(err);
+});
+
+app.use(function(err, req, res, next) {
+  if (!err.statusCode) err.statusCode = 500;
+  err;
+
+  if (err.shouldRedirect) {
+    res.render('404');
+  } else {
+    res.status(err.statusCode).send(err.message);
+  }
+});
+
 app.listen(port, function() {
   console.log(`listening on port ${port}`);
 });
