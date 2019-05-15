@@ -1,0 +1,21 @@
+{
+  "name": "apirest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "serve": "nodemon back/server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.16.4",
+    "firebase": "6.0.2",
+    "helmet": "3.18.0",
+    "morgan": "1.9.1",
+    "request": "2.88.0"
+  },
+  "devDependencies": {
+    "nodemon": "1.19.0"
+  }
+}
