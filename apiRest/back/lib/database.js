@@ -4,21 +4,26 @@ firebase.initializeApp(config.firebaseConfig);
 const db = firebase.database().ref('apiRest');
 
 function createMovie(data) {
-  console.log(data);
   return db.push(data);
 }
+
 function getAllMovies() {
   return new Promise((resolve, reject) => {
     db.once(
       'value',
       snapshot => {
-        const data = snapshot.val();
-        resolve(data);
+        const data = snapshot.val() || {};
+        let newData = Object.keys(data).map(id => {
+          data[id].id = id;
+          return data[id];
+        });
+        resolve(newData);
       },
       err => reject(err)
     );
   });
 }
+
 function getMovie(id) {
   return new Promise((resolve, reject) => {
     db.child(id).once(
