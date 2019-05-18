@@ -23,8 +23,5 @@
     "dev": "run-p start:dev autobuild",
     "start": "sirv public",
     "start:dev": "sirv public --dev"
-  },
-  "dependencies": {
-    "svelte-simple-modal": "^0.1.0"
   }
 }

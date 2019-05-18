@@ -37,10 +37,7 @@ export default {
       ].filter(Boolean),
       extract: 'public/bundle.css'
     }),
-    resolve({
-      // Below is the important line!
-      dedupe: ['svelte', 'svelte/transition', 'svelte/internal']
-    }),
+    resolve(),
     commonjs(),
     !production && livereload('public'),
     production && terser()
