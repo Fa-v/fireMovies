@@ -28,3 +28,18 @@ Requerimientos:
 - Unifica la estructura de datos (quita details) y normaliza las propiedades (sin capitalización)
 - Usa Bootstrap y plantillas de Pug (usar includes)
 - Manten una buena estructura separando rutas y modelos, puedes usar async/await para simplificar el trabajo
+
+### Rama apiRest
+
+### [Clase 72](https://github.com/Fictizia/Master-en-Programacion-FullStack-con-JavaScript-y-Node.js_ed3/blob/master/teoria/clase72.md)
+
+Requerimientos:
+
+- Migrar la aplicación de MovieFire para hacer una APIRest con Nodejs
+
+Para ver esta rama en tu local debes estar en el directorio apiRest/. Dentro de esta carpeta encontrarás dos directorios, uno que contiene el código del backend y otro con el código del front. Para instalar las dependencias del back haz `npm install` en la raíz del proyecto /apiRest. A continuación muévete a apiRest/front y vuelve a hacer `npm install` para instalar las dependencias del front.
+
+Necesitarás dos terminales, una para lanzar el back y otra para lanzar el servidor de desarrollo del front.
+En apiRest/ haz `npm run serve` y en apiRest/front `npm run dev` podrás ver la aplicación el http://localhost:5000.
+
+Para el back hemos usado Firebase, Node.js y Express.js y para el front hemos usado Svelte, un framework reactivo que no usa un DOM virtual 🤯!
