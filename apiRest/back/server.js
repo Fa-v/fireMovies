@@ -33,7 +33,7 @@ app.get('/api/movies/:id', getCurrentMovie);
 
 app.post('/api/movies', newMovie);
 
-app.put('/api/movies/', modifyMovie);
+app.put('/api/movies', modifyMovie);
 
 app.delete('/api/movies/:id', deleteCurrentMovie);
 
